@@ -3,7 +3,7 @@
 # 노 모어 히어로즈3 모작(C++, DirectX 11, 팀 프로젝트(팀원))
 <img src="https://i.namu.wiki/i/nFL9gxo39oVCf5mxeKwVuuV1bFH8vRDv4S_ttuAKedAL8qUoNJJ3ToBbjOF2cKxNcOvV8hjAbDIgo8E4S4T104GILyzV50kvJ8DClHYs4CHmWZcAf9eusxjAQrU0DsPfHfcbUPOvFbbPI_DO0D65sA.webp" alt="이미지" width="500">
 
-2024.08.26 ~ 2024.11.04(2개)
+2024.08.26 ~ 2024.11.04(2개월)
 
 #### 역할: Framework, Shader, MiniGame 1
 
