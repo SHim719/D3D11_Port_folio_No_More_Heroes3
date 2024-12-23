@@ -5,7 +5,7 @@
 
 2024.08.26 ~ 2024.11.04(2개월)
 
-#### 역할: Framework, Shader, MiniGame 1
+#### 역할: Shader, MiniGame 1
 
 </div>
 
