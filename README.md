@@ -1,7 +1,7 @@
 <div align="center">
   
 # 노 모어 히어로즈3 모작(C++, DirectX 11, 팀 프로젝트(팀원))
-<img src="https://i.namu.wiki/i/nFL9gxo39oVCf5mxeKwVuuV1bFH8vRDv4S_ttuAKedAL8qUoNJJ3ToBbjOF2cKxNcOvV8hjAbDIgo8E4S4T104GILyzV50kvJ8DClHYs4CHmWZcAf9eusxjAQrU0DsPfHfcbUPOvFbbPI_DO0D65sA.webp" alt="이미지" width="500">
+<img src="https://i.namu.wiki/i/hHsWaIFAVsVPPhkBTqoK9OMzRuHXYYq1NIF5jlgYAFC0yO8yI9HNJOtnRxaNdYBiLAkEmBq2CSvwwQHXBFx9-KVO0wYd5Tv09K3yCXrDaEPNNrNrO2Mk6FmjoUpDtp0ihwxHFOpgB2S_qMhm21BAFg.webp" alt="이미지" width="500">
 
 2024.08.26 ~ 2024.11.04(2개월)
 
