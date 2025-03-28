@@ -1,6 +1,6 @@
 <div align="center">
   
-# 노 모어 히어로즈3 모작(C++, DirectX 11, 팀 프로젝트(팀원))
+# 노 모어 히어로즈3 모작(C++, DirectX 11, 팀 프로젝트(8人, 팀원))
 <img src="https://github.com/SHim719/Image/blob/main/%EB%85%B8%EB%AA%A8%EC%96%B4%EC%8D%B8%EB%84%A4%EC%9D%BC.webp" alt="이미지" width="500">
 
 #### 역할: Shader, MiniGame 1
