@@ -30,17 +30,17 @@ HRESULT CCamera::Initialize(void* pArg)
 	m_pTransform->Set_Position(XMLoadFloat4(&m_CameraDesc.vEye));
 	m_pTransform->LookAt(XMLoadFloat4(&m_CameraDesc.vAt));
 
-	m_fCascadeEnd[0] = m_CameraDesc.fNear;
-	m_fCascadeEnd[1] = 20.f;
-	m_fCascadeEnd[2] = 50.f;
-	m_fCascadeEnd[3] = 100.f;
+	m_fCascadeEnd = { 20.f, 50.f, 100.f };
 
 	return S_OK;
 }
 
 void CCamera::Tick(_float fTimeDelta)
 {
-	
+	if (m_pGameInstance->GetKeyDown(eKeyCode::One))
+	{
+		m_bToggle = !m_bToggle;
+	}
 }
 
 void CCamera::LateTick(_float fTimeDelta)
@@ -118,8 +118,14 @@ void CCamera::Update_Cascade()
 	//	m_pGameInstance->Set_CascadeViewProj(i, CascadeViewProj);
 	//}
 
+	const _float CascadeShadowMapScale = m_pGameInstance->Get_CascadeShadowMapScale();
 
-	for (_uint i = 0; i < 3; ++i)
+	array<_matrix, CASCADE_COUNT> CascadeProjMatrices;
+	CascadeProjMatrices[0] = XMMatrixPerspectiveFovLH(To_Radian(m_CameraDesc.fFovy), m_CameraDesc.fAspect, m_CameraDesc.fNear, m_fCascadeEnd[0]);
+	for (_uint i = 1; i < CASCADE_COUNT; ++i)
+		CascadeProjMatrices[i] = XMMatrixPerspectiveFovLH(To_Radian(m_CameraDesc.fFovy), m_CameraDesc.fAspect, m_fCascadeEnd[i - 1], m_fCascadeEnd[i]);
+
+	for (_uint i = 0; i < CASCADE_COUNT; ++i)
 	{
 		_vector vFrustumCorners[8] =
 		{
@@ -132,9 +138,9 @@ void CCamera::Update_Cascade()
 			{ 1.f, -1.f, 1.f, 1.f },
 			{ -1.f, -1.f, 1.f, 1.f },
 		};
-	
+
 		_matrix CascadeCameraViewProj = m_pTransform->Get_WorldMatrixInverse();
-		CascadeCameraViewProj *= XMMatrixPerspectiveFovLH(To_Radian(m_CameraDesc.fFovy), m_CameraDesc.fAspect, m_fCascadeEnd[i], m_fCascadeEnd[i + 1]);
+		CascadeCameraViewProj *= CascadeProjMatrices[i];
 	
 		_matrix CascadeCameraViewProjInv = XMMatrixInverse(nullptr, CascadeCameraViewProj);
 	
@@ -145,45 +151,53 @@ void CCamera::Update_Cascade()
 			vFrustumCenter += vFrustumCorners[j];
 		}
 		vFrustumCenter /= 8.f;
-		XMVectorSetW(vFrustumCenter, 1.f);
-		
-		_float fRadius = XMVector3Length(vFrustumCorners[0] - vFrustumCorners[6]).m128_f32[0] * 0.5f;
+	
+		//_float fRadius = XMVector3Length(vFrustumCorners[0] - vFrustumCorners[6]).m128_f32[0] * 0.5f;
+		_float fRadius = 0.0f;
+		for (const _vector& corner : vFrustumCorners)
+		{
+			_float distance = XMVector3Length(corner - vFrustumCenter).m128_f32[0];
+			fRadius = max(fRadius, distance);
+		}
+		fRadius = std::ceil(fRadius * 8.0f) / 8.0f;
+
+		_vector MaxExtents = { fRadius, fRadius, fRadius, 1.f };
+		_vector MinExtents = -MaxExtents;
+		_vector CascadeExtents = MaxExtents - MinExtents;
+
 		_vector vLightDir = m_pGameInstance->Get_LightDir();
-		//_float fFrustumSize = fRadius * 2.f;
+		_matrix LightViewMatrix = XMMatrixLookAtLH(vFrustumCenter, vFrustumCenter + vLightDir * fRadius, XMVectorSet(0.f, 1.f, 0.f, 0.f));
+		
+		const float Far_Factor = 1.5f;
+
+		_float l = XMVectorGetX(MinExtents);
+		_float b = XMVectorGetY(MinExtents);
+		_float n = XMVectorGetZ(MinExtents) - Far_Factor * fRadius;
+		_float r = XMVectorGetX(MaxExtents);
+		_float t = XMVectorGetY(MaxExtents);
+		_float f = XMVectorGetZ(MaxExtents) * Far_Factor;
+
+		_matrix LightProjMatrix = XMMatrixOrthographicOffCenterLH(l, r, b, t, n, f);
 	
-		//_float fTexelSize = fFrustumSize / m_pGameInstance->Get_ShadowMapScale();
-		//
-		//vFrustumCenter /= fTexelSize;
-		//vFrustumCenter = XMVectorFloor(vFrustumCenter);
-		//vFrustumCenter *= fTexelSize;
-	
-		_float fTexelPerUnit = m_pGameInstance->Get_CascadeShadowMapScale() / (fRadius * 2.f);
+		_matrix ViewProj_PrevSnapping = LightViewMatrix * LightProjMatrix;
+
+		_vector ShadowOrigin{ 0, 0, 0, 1 };
+		ShadowOrigin = XMVector4Transform(ShadowOrigin, ViewProj_PrevSnapping);
+		ShadowOrigin *= (CascadeShadowMapScale / 2.0f);
 		
-		_matrix ScalrMatrix = XMMatrixScaling(fTexelPerUnit, fTexelPerUnit, fTexelPerUnit);
-		
-		_matrix BaseViewMatrix = XMMatrixLookAtLH(XMVectorZero(), -vLightDir, XMVectorSet(0.f, 1.f, 0.f, 0.f));
-		BaseViewMatrix = XMMatrixMultiply(ScalrMatrix, BaseViewMatrix);
-		
-		_matrix BaseViewMatrixInv = XMMatrixInverse(nullptr, BaseViewMatrix);
-		
-		vFrustumCenter = XMVector3TransformCoord(vFrustumCenter, BaseViewMatrix);
-		XMVectorSetX(vFrustumCenter, floor(XMVectorGetX(vFrustumCenter)));
-		XMVectorSetY(vFrustumCenter, floor(XMVectorGetY(vFrustumCenter)));
-		vFrustumCenter = XMVector3TransformCoord(vFrustumCenter, BaseViewMatrixInv);
-	
-		_vector vShadowCameraPos = vFrustumCenter - vLightDir * fRadius * 2.f;
-	
-		_matrix LightViewMatrix = XMMatrixLookAtLH(vShadowCameraPos, vFrustumCenter, XMVectorSet(0.f, 1.f, 0.f, 0.f));
-		
-		_matrix CascadeViewProj = LightViewMatrix * XMMatrixOrthographicOffCenterLH(-fRadius, fRadius, -fRadius, fRadius, 
-			-fRadius * 6.f, fRadius * 6.f);
+		_vector RoundedOrigin = XMVectorRound(ShadowOrigin);
+		_vector RoundedOffset = RoundedOrigin - ShadowOrigin;
+		RoundedOffset *= (2.0f / CascadeShadowMapScale);
+		LightProjMatrix.r[3].m128_f32[0] += RoundedOffset.m128_f32[0];
+		LightProjMatrix.r[3].m128_f32[1] += RoundedOffset.m128_f32[1];
+
+		_matrix CascadeViewProj = LightViewMatrix * LightProjMatrix;
 	
 		m_pGameInstance->Set_CascadeViewProj(i, CascadeViewProj);
 	}
+
 }
 	
-
-
 
 
 HRESULT CCamera::Render()

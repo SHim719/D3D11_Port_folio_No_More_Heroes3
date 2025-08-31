@@ -35,7 +35,7 @@ public:
 
 protected:
 	CAMERADESC					m_CameraDesc;
-
+	bool						m_bToggle = false;
 public:
 	const CAMERADESC& Get_CameraDesc() const {
 		return m_CameraDesc;
@@ -46,8 +46,7 @@ public:
 
 
 private:
-	_float		m_fCascadeEnd[4] = {};
-	_float3		m_PrevShadowCamPos[3] = {};
+	array<_float, CASCADE_COUNT> m_fCascadeEnd;
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
