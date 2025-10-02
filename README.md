@@ -10,6 +10,7 @@
 </div>
 
 # 동영상
+https://youtu.be/Cfby8ON7V2M
 
 
 # 프로젝트 구현사항
