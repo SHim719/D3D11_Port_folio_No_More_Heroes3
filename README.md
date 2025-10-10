@@ -3,7 +3,7 @@
 # 노 모어 히어로즈3 모작(C++, DirectX 11, 팀 프로젝트(8人, 팀원))
 <img src="https://github.com/SHim719/Image/blob/main/%EB%85%B8%EB%AA%A8%EC%96%B4%EC%8D%B8%EB%84%A4%EC%9D%BC.png" alt="이미지" width="500">
 
-2024.08.26 ~ 2024.11.04(2개월)
+2024.08.26 ~ 2024.11.04
 
 #### 역할: Shader, MiniGame 1
 
@@ -17,11 +17,11 @@ https://youtu.be/Cfby8ON7V2M
 
 ## 쉐이더
 
-### CSM(Cascade Shadow Mapping)
+### CSM(Cascaded Shadow Mapping)
 <img src="https://github.com/SHim719/Image/blob/main/%EC%BA%90%EC%8A%A4%EC%BC%80%EC%9D%B4%EB%93%9C1.gif" alt="이미지" width="400"> <img src="https://github.com/SHim719/Image/blob/main/%EC%BA%90%EC%8A%A4%EC%BC%80%EC%9D%B4%EB%93%9C2.gif" alt="이미지" width="400">
 <img src="https://github.com/SHim719/Image/blob/main/%EC%BA%90%EC%8A%A4%EC%BC%80%EC%9D%B4%EC%8A%A4%EC%A7%80%EC%98%A4%EB%A9%94%ED%8A%B8%EB%A6%AC.png" alt="이미지" width="500">
 
-- 야외 같이 큰 맵은 기존 방식의 쉐도우 매핑으로는 한계가 있다고 생각했고, 이를 해결하기 위해 가까이에 있는 물체의 그림자를 더 선명하게 그리고 멀리있는 그림자의 해상도를 낮추는 Cascade Shadow Mapping을 구현했습니다. 
+- 야외 같이 큰 맵은 기존 방식의 쉐도우 매핑으로는 한계가 있다고 생각했고, 이를 해결하기 위해 Cascaded Shadow Mapping을 구현했습니다. 
 - Texture2DArray를 이용한 그림자 맵을 생성하고, 지오메트리 쉐이더를 이용해 한 번의 드로우 콜로 모든 그림자 맵에 깊이를 기록했습니다.
 - 3X3 PCF 샘플링을 통해 부드러운 그림자를 구현했습니다.
 
@@ -29,23 +29,21 @@ https://youtu.be/Cfby8ON7V2M
 <img src="https://github.com/SHim719/Image/blob/main/PBR.png" alt="이미지" width="500"> 
 
 - 노모어 히어로즈 3는 PBR 머티리얼을 사용하고 있었기 때문에, 조명 연산에서 퐁 쉐이딩 대신 PBR을 적용했습니다.
-
-- 첫 번째 패스에서 Diffuse, Normal, ORM(Occlusion, Roughness, Metal)을 G-버퍼에 기록한 뒤, G-버퍼에 기록한 정보들을 토대로 디퍼드 렌더링으로 조명 연산을 처리했습니다.
+- 첫 번째 패스에서 Diffuse, Normal, ORM(Occlusion, Roughness, Metal)을 G-버퍼에 기록한 뒤, G-버퍼에 기록한 정보들을 토대로 디퍼드 렌더링으로 PBR 연산을 처리했습니다.
 
 ### Bloom + HDR
 <img src="https://github.com/SHim719/Image/blob/main/Bloom1.gif" alt="이미지" width="400"> <img src="https://github.com/SHim719/Image/blob/main/Bloom2.gif" alt="이미지" width="400">
 <img src="https://github.com/SHim719/Image/blob/main/Bloom%EC%BD%94%EB%93%9C.png" alt="이미지" width="400">
 
 - PBR의 메탈 성분이 강렬한 빛 반사를 표현할 수 있도록 하고, 게임 이펙트의 다채로운 표현을 강화하기 위해 Bloom 효과를 구현했습니다.
-
 - 스크린에서 밝은 픽셀만 추출한 뒤 블러 처리하고, 이를 원본 스크린 색상에 더해 Bloom 효과를 구현했습니다. 또한, Bloom 처리할 때 HDR 색상을 표현해야 했기 때문에, 톤 매핑을 사용해 HDR 색상을 LDR 색상으로 변환했습니다.
   
 ### SSR(Screen Space Reflection)
 <img src="https://github.com/SHim719/Image/blob/main/SSR.gif" alt="이미지" width="500"><img src="https://github.com/SHim719/Image/blob/main/SSRRaymarch.png" alt="이미지" width="400">
 
-- 바닥에 자연스럽고 예쁜 반사 효과를 구현하고 싶었지만, 성능까지 고려해야 했습니다. 이를 해결하기 위해 Screen Space Reflection(SSR)을 사용하여 효율적인 반사 효과를 구현했습니다.
-
-- 뷰 공간에서 뷰 벡터와 노멀을 활용하여 반사 벡터를 계산한 뒤, Ray Marching 기법을 사용해 스크린 상에서 반사된 지점을 도출했습니다. 최종적으로 반사된 지점의 픽셀 색상과 원래 스크린의 색상을 혼합하여 자연스러운 반사 효과를 구현했습니다.
+- 바닥의 반사효과를 구현하기 위해 Screen Space Reflection(SSR)을 사용하여 효율적인 반사 효과를 구현했습니다.
+- 뷰 공간에서 뷰 벡터와 노멀을 활용하여 반사 벡터를 계산한 뒤, Ray Marching 기법을 사용해 스크린 상에서 반사된 지점을 도출했습니다. 반사의 정확도를 위해 이진 탐색을 통해 반사되는 위치를 수렴시켜, 픽셀의 색깔을 결정했습니다.
+- 최종적으로 반사된 지점의 픽셀 색상과 원래 스크린의 색상을 혼합하여 자연스러운 반사 효과를 구현했습니다.
 
 ### DOF(Depth Of Field)
 <img src="https://github.com/SHim719/Image/blob/main/DOF.gif" alt="이미지" width="500"><img src="https://github.com/SHim719/Image/blob/main/DOF%EC%BD%94%EB%93%9C.png" alt="이미지" width="500">
@@ -67,7 +65,7 @@ https://youtu.be/Cfby8ON7V2M
 - 탄막 슈팅 디펜스 장르의 미니게임을 구현했습니다. 좌측의 진행바가 꽉 차면 보스가 등장하고 보스를 잡으면 시네마틱 연출 이후, 다음 레벨로 넘어갑니다.
 
 ### 발사체
-- 플레이어, 용, 적 등 모든 발사체는 오브젝트 풀링 기법을 사용하여 미리 생성한 객체들을 재사용함으로써 성능을 최적화했습니다.
+- 플레이어, 용, 적 등 모든 발사체는 오브젝트 풀링 기법을 사용하여 미리 생성한 객체들을 재사용함으로써 객체 생성/삭제의 오버헤드를 최적화했습니다.
 
 ### 무한 순환 맵
 - 약 10개의 도로 메쉬로 이루어진 한 단위 청크를 3개 생성하고, 플레이어 방향으로 청크를 이동시켜 플레이어가 전진하는 것처럼 보이게 구현했습니다.
