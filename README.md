@@ -54,8 +54,15 @@ https://youtu.be/Cfby8ON7V2M
 
 - 모자이크 및 암전 효과가 필요한 특정 영역(플레이어, 사각형 범위 등)을 스텐실 버퍼에 표시하여, 해당 픽셀에만 선택적으로 후처리가 적용되도록 구현했습니다.
 
-## 미니게임
+## 시네마틱 툴
+<img src="https://github.com/SHim719/Image/blob/main/%EB%85%B8%EB%AA%A8%EC%96%B4%EC%8B%9C%EB%84%A4%EB%A7%88%ED%8B%B11.gif" alt="이미지" width="400"> <img src="https://github.com/SHim719/Image/blob/main/%EB%85%B8%EB%AA%A8%EC%96%B4%EC%8B%9C%EB%84%A4%EB%A7%88%ED%8B%B12.gif" alt="이미지" width="400">
+<img src="https://github.com/SHim719/Image/blob/main/%EC%8B%9C%EB%84%A4%EB%A7%88%ED%88%B4.png" alt="이미지" width="800">
 
+- 게임 내부의 시네마틱 제작의 편의를 위해 시네마틱 툴을 제작했습니다. 시간 순으로 정렬된 std::map을 이용해 키 프레임 데이터를 저장하고 시네마틱 실행시에 키 프레임 데이터를 보간하여 카메라, 시네마틱 액터의 움직임을 구현했습니다.
+- 시네마틱을 관리하고 재생을 처리하는 CinematicManager를 설계하고, 시네마틱 시작과 종료 지점의 콜백 함수를 등록하여 시네마틱 시작이나 종료시에 자연스럽게 게임 흐름을 조정할 수 있도록 설계했습니다.
+
+
+## 미니게임
 <img src="https://github.com/SHim719/Image/blob/main/%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%841.gif" alt="이미지" width="400"> <img src="https://github.com/SHim719/Image/blob/main/%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%842.gif" alt="이미지" width="400">
 
 - 탄막 슈팅 디펜스 장르의 미니게임을 구현했습니다. 좌측의 진행바가 꽉 차면 보스가 등장하고 보스를 잡으면 시네마틱 연출 이후, 다음 레벨로 넘어갑니다.
