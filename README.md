@@ -71,11 +71,6 @@ https://youtu.be/Cfby8ON7V2M
 - **오브젝트 풀링**: 탄막 슈팅 장르 특성상 빈번하게 발생하는 발사체 생성/파괴 비용을 줄이기 위해, 미리 할당된 객체를 재사용하는 풀링 시스템을 적용했습니다.
 - **무한 순환 맵**: 여러 개의 도로 청크를 미리 생성하고 순환시키는 방식으로 무한히 이어지는 맵을 구현하여 메모리 사용량을 최소화했습니다.
 
-### 3D 텍스트
-<img src="https://github.com/SHim719/Image/blob/main/3D%ED%85%8D%EC%8A%A4%ED%8A%B8.png" alt="이미지" width="400">
-
-- **RenderTarget-to-Texture**: 보물상자 위의 텍스트, 플레이어 체력 텍스트 3D 공간에 띄우기 위해 먼저 폰트를 렌더 타겟에 그린 후 이를 텍스처로 변환하여 사각형 메쉬에 입히는 방식을 고안했습니다.
-
 ### 슬롯머신 시스템
 <img src="https://github.com/SHim719/Image/blob/main/%EB%A3%B0%EB%A0%9B.gif" alt="이미지" width="400"><img src="https://github.com/SHim719/Image/blob/main/%EC%8A%AC%EB%A1%AF%EB%A8%B8%EC%8B%A0.png" alt="이미지" width="400">
 
